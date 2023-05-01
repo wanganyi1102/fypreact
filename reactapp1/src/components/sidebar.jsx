@@ -14,10 +14,9 @@ class SideBar extends Component {
     state = { 
         clicked: 0,
         map_content: [
-            {id: 0, value: < Colours setColour={this.props.setColour}/> },
+            {id: 0, value: < Colours setColour={this.props.setColour} get_recent_colours={this.props.get_recent_colours}/> },
             {id: 1, value: < References />},
         ]
-        
     } 
 
     toggle = index => {
@@ -28,7 +27,6 @@ class SideBar extends Component {
 
     render() { 
         return (
-            
             // <div className='Sidebar' style={{ backgroundImage: `url(${SideBackGround})` }}>
             <div className='Sidebar' >
 
@@ -57,7 +55,6 @@ class SideBar extends Component {
                         </li>)})
                     }
                 </ul>
-
 
             </div>
         )

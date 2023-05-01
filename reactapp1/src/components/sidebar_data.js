@@ -17,6 +17,51 @@ export const SidebarData = [
     }
 ]
 
+export const CategoryData = [
+    {
+        index: 0,
+        category_name:'nature',
+        colour_indices: [106,120,125,126,127,130,135,136,148,150,154,155,157,159,162,178,179]
+    },
+    {
+        index: 1,
+        category_name:'plants',
+        colour_indices: [64,94,97,118,124,129,134,142,169]
+    },
+    {
+        index: 2,
+        category_name:'human and animals',
+        colour_indices: [1,16,17,18,19,20,21,22,23,24,25]
+    },
+    {
+        index: 3,
+        category_name:'food',
+        colour_indices: [52,53,54,55,56,57,58,59,60,61,121,122,153,170]
+    },
+    {
+        index: 4,
+        category_name:'vehicles',
+        colour_indices: [2,3,4,5,6,7,8,9,10]
+    },
+    {
+        index: 5,
+        category_name:'household objects',
+        colour_indices: [45,46,47,48,49,50,51,62,63,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,85,86,89,90,91,93,98,101,102,103,109,110,112,113,114,115,116,117,118
+            ,123,131,133,141,151,152,156,165,168,171,172,173,174,175,176,177,180,181]
+    },
+    {
+        index: 6,
+        category_name:'other objects',
+        colour_indices: [11,12,13,14,15,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,84,87,88,92,95,96,99,105,107,108,111,128,137,138,140,144,145,146,147,149,158,161
+            ,163,164,266]
+    },
+    {
+        index: 7,
+        category_name:'materials',
+        colour_indices: [100,104,132,139,143,160,26,182]
+    },
+]
+
 export const ColourData =[
     {
         index: 1,

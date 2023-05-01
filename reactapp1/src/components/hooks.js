@@ -77,7 +77,6 @@ export function useOnDraw(onDraw){
         const listener = () => {
             isDrawingRef.current = true;
         }
-        // TODO: bug here -- nearby text gets selected. need to check x and y axis
         // canvasRef.current.addEventListener("mousedown", listener);
         window.addEventListener("mousedown", listener);
     }

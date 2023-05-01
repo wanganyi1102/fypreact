@@ -284,8 +284,9 @@ def inputimage():
         # change to grey scale
         img_rgb = Image.open('foo.png')
         img_gray = img_rgb.convert('L')
-        curr_dir = '/Users/anyiwang/Desktop/rebuild/'
-        img_gray.save(f'{curr_dir}archive/foo.png')
+        # curr_dir = '/Users/anyiwang/Desktop/rebuild/'
+        curr_dir = '/Users/anyiwang/Documents/FYP/rebuild'
+        img_gray.save(f'{curr_dir}/archive/foo.png')
 
         print('saved image!')
 

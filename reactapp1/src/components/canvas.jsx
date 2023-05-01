@@ -6,6 +6,8 @@ import { ColourData } from './sidebar_data';
 import CanvasBackGround from '../images/canvas.jpg'
 import {Link} from "react-router-dom";
 
+import UndoIcon from '@mui/icons-material/Undo';
+
 const Canvas = ({tool, brushColour, brushSize}) => {
 
     const {
@@ -123,7 +125,7 @@ const Canvas = ({tool, brushColour, brushSize}) => {
     //     }
     // }
 
-    function floodArea(startpoint, ctx, colour){
+    function floodArea(startpoint, ctx, colour, range = 2){
         const x = parseInt(startpoint.x);
         const y = parseInt(startpoint.y);
         const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -139,65 +141,41 @@ const Canvas = ({tool, brushColour, brushSize}) => {
                              255
                             ]
         
-        // console.log('fill colour: ' + colour + ' -- ' + fill_colour_rgba);
-
-        // fillPixel(imageData, x, y, fill_colour_rgba);
-
-        for(let x=0; x<ctx.canvas.width; x++){
-            for(let y=0; y<ctx.canvas.height; y++){
-                setPixel(imageData, x, y, fill_colour_rgba);
+        // using stack
+        const visited = new Uint8Array(imageData.width, imageData.height);
+        const targetColor = getPixel(imageData, x, y); // get the color we're filling
+        
+        // check we are actually filling a different color
+        if (!colorsMatch(targetColor, fill_colour_rgba)) {
+            const rangeSq = range * range;
+            const pixelsToCheck = [x, y];
+            while (pixelsToCheck.length > 0) {
+                const y = pixelsToCheck.pop();
+                const x = pixelsToCheck.pop();
+                
+                const currentColor = getPixel(imageData, x, y);
+                if (!visited[y * imageData.width + x] &&
+                    colorsMatch(currentColor, targetColor)) {
+                    setPixel(imageData, x, y, fill_colour_rgba);
+                    visited[y * imageData.width + x] = 1;  // mark we were here already
+                    pixelsToCheck.push(x + 1, y);
+                    pixelsToCheck.push(x - 1, y);
+                    pixelsToCheck.push(x, y + 1);
+                    pixelsToCheck.push(x, y - 1);
+                }
             }
+            ctx.putImageData(imageData, 0, 0);
         }
-        
-        // // put the data back
-        ctx.putImageData(imageData, 0, 0);
-    }
 
-    // TODO: work on fill pixel
-    function fillPixel(imageData, x, y, fillColour) {
-        const currentColor = getPixel(imageData, x, y);
-        
-        if (colorsMatch(currentColor, fillColour)){
-            return
-        }
-        console.log('current colour: '+ currentColor);
-        console.log('fill colour: '+ fillColour);
-
-        // for(let i=0; i<=3; i++){
-        //     setPixel(imageData, x+i, y, fillColour);
-        //     setPixel(imageData, x-i, y, fillColour);
-        //     setPixel(imageData, x, y+i, fillColour);
-        //     setPixel(imageData, x, y-i, fillColour);
-        //     setPixel(imageData, x+i, y+i, fillColour);
-        //     setPixel(imageData, x-i, y+i, fillColour);
-        //     setPixel(imageData, x-i, y-i, fillColour);
-        //     setPixel(imageData, x+i, y-i, fillColour);
+        // fill entire canvas
+        // for(let x=0; x<ctx.canvas.width; x++){
+        //     for(let y=0; y<ctx.canvas.height; y++){
+        //         setPixel(imageData, x, y, fill_colour_rgba);
+        //     }
         // }
-
-        // setPixel(imageData, x, y, fillColour);
-
-        // fillPixel(imageData, x + 1, y, fillColour);
-        // fillPixel(imageData, x - 1, y, fillColour);
-        // fillPixel(imageData, x, y + 1, fillColour);
-        // fillPixel(imageData, x, y - 1, fillColour);
-
-        setPixel(imageData, x+1, y, fillColour);
-        setPixel(imageData, x-1, y, fillColour);
-        setPixel(imageData, x, y+1, fillColour);
-        setPixel(imageData, x, y-1, fillColour);
-        setPixel(imageData, x+1, y+1, fillColour);
-        setPixel(imageData, x-1, y+1, fillColour);
-        setPixel(imageData, x-1, y-1, fillColour);
-        setPixel(imageData, x+1, y-1, fillColour);
-
-        fillPixel(imageData, x + 3, y, fillColour);
-        fillPixel(imageData, x - 3, y, fillColour);
-        fillPixel(imageData, x, y + 3, fillColour);
-        fillPixel(imageData, x, y - 3, fillColour);
     }
 
     // helper functions
-    
 
     function getPixel(imageData, x, y) {
         if (x < 0 || y < 0 || x >= imageData.width || y >= imageData.height) {
@@ -218,8 +196,7 @@ const Canvas = ({tool, brushColour, brushSize}) => {
     }
     
     function colorsMatch(a, b) {
-        // return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
-        return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
+        return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
     }
 
     function calcCircleRadius(brushSize){
@@ -235,10 +212,9 @@ const Canvas = ({tool, brushColour, brushSize}) => {
         return this_i[0].radscale;
     }
 
-    // const [canRef, setCanRef] =useState(0);
-    // function setRef(ref) {
-    //     setCanRef(ref);
-    // }
+    function undo(){
+
+    }
 
     async function handleGenerate(){
         const ctx = canRef.current;
@@ -301,10 +277,13 @@ const Canvas = ({tool, brushColour, brushSize}) => {
 
     const w = (window.innerWidth-300) *0.95;
     const h = window.innerHeight * 0.9;
-    console.log('height and width: ' +h + 'x'+ w);
+    // console.log('height and width: ' +h + 'x'+ w);
     return (
-        <div className='CanvasWrap' style={{ backgroundImage: `url(${CanvasBackGround})`}}>
-            
+        // <div className='CanvasWrap' style={{ backgroundImage: `url(${CanvasBackGround})`}}>
+        <div className='CanvasWrap'>
+            <UndoButton onClick={() => this.undo()}>
+                <UndoIcon fontSize="large"/>
+            </UndoButton>
             <canvas id='Canvas' ref={setCanvasRef} width={w} height={h} onMouseDown={onMouseDown} />
             <GenerateButton to="/result" onClick={() => handleGenerate()} >Generate</GenerateButton>
         </div>
@@ -316,10 +295,14 @@ const Canvas = ({tool, brushColour, brushSize}) => {
 const GenerateButton = styled(Link)`
 
     position: absolute;
+    text-decoration: none;
     bottom:10px;
     right:0;
     background-color: #252A36;
     color: #FFF9E9;
+    border-style: solid;
+    border-color: #FFF9E9;
+    border-width: 1px;
     margin: 3px;
     border-radius: 10px;
     padding: 5px 10px;
@@ -333,5 +316,16 @@ const GenerateButton = styled(Link)`
         color: #252A36;
     }
 `
- 
+const UndoButton = styled.div`
+    position: absolute;
+    top:3px;
+    right:15px;
+    
+
+    &:hover {
+        transition: all 0.3s ease-in-out;
+        color: #f5ac53;
+    }
+` 
+
 export default Canvas;

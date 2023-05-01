@@ -25,36 +25,38 @@ class BottomBar extends Component {
 
     render() { 
         return (
-            <BottomBarWrap>
-                {/* <div className='toggle' onClick={() => this.setActive}></div> */}
-                <Toggle onClick={() => this.setActive()}></Toggle>
+            <BottomBarWrap active={this.state.active}>
 
-                <table id='itemstable'>
-                    <tr id='itemsrow'>
-                        {this.state.tools.map(tool => 
-                            <td id='itemsdiv' align="center" width="25%">
-                                <Tool className='tool' id={tool.id} src={tool.src_image} 
-                                    opacity={this.getOpacity(tool.id)}
-                                    onClick={() => this.onToolSelect(tool.id)}
-                                    // style={this.setTogglePosition()}
-                                />
-                            </td>)}
-
-                        <td align="center" width="25%">
-                            <Dropdown>
-                                <Dropdown.Toggle variant="secondary" id="brushSizeButton">
-                                    <CircleIcon style={{ fill: '#fff', fontSize: this.state.clicked_size*2 }}/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu id="brushSizeMenu">
-                                    {this.state.brush_sizes.map(brush_size => 
-                                    <DropdownItem onClick={() => this.onSizeSelect(brush_size.size)}><CircleIcon style={{ fill: '#fff', fontSize: brush_size.size*2}}/></DropdownItem> )}
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </td>
-                    </tr> 
-                </table>
+                <Toggle onClick={() => this.setActive()}></Toggle> 
+                {this.state.active == true ? (    
+                    <table id='itemstable'>
+                        <tr id='itemsrow'>
+                            {this.state.tools.map(tool => 
+                                <td id='itemsdiv' align="center" width="25%">
+                                    <Tool className='tool' id={tool.id} src={tool.src_image} 
+                                        opacity={this.getOpacity(tool.id)}
+                                        onClick={() => this.onToolSelect(tool.id)}
+                                        // style={this.setTogglePosition()}
+                                    />
+                                </td>)}
+    
+                            <td align="center" width="25%">
+                                <Dropdown>
+                                    <Dropdown.Toggle variant="secondary" id="brushSizeButton">
+                                        <CircleIcon style={{ fill: '#fff', fontSize: this.state.clicked_size*2 }}/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu id="brushSizeMenu">
+                                        {this.state.brush_sizes.map(brush_size => 
+                                        <DropdownItem onClick={() => this.onSizeSelect(brush_size.size)}><CircleIcon style={{ fill: '#fff', fontSize: brush_size.size*2}}/></DropdownItem> )}
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </td>
+                        </tr> 
+                    </table>): null
+                }
 
             </BottomBarWrap>
+            
         );
     }
 
@@ -98,8 +100,11 @@ class BottomBar extends Component {
 
 const BottomBarWrap = styled.div`
     background-color: #FFF9E9;
-    width: 40%;
-    height: 13%;
+    width: ${props => (props.active == true ? 40 : 0)}%;
+    height: ${props => (props.active == true ? 13 : 3)}%;
+    /* transition-delay: 100ms, 100ms; */
+    transition-duration: 1s, 1s;
+    transition-property: height, width;
     align-items: center;
     position: absolute;
     border-radius: 60px;
